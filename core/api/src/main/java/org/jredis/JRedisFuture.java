@@ -709,7 +709,7 @@ public interface JRedisFuture {
 	 * @param to
 	 * @return
 	 */
-	public Future<List<byte[]>> zrangebyscore (String setkey, double minScore, double maxScore); 
+	public Future<List<byte[]>> zrangebyscore (String setkey, double minScore, double maxScore, Opt... opts); 
 
 	/**
 	 * @Redis ZREMRANGEBYSCORE

@@ -35,8 +35,10 @@ import org.jredis.RedisType;
 import org.jredis.ZSetEntry;
 import org.jredis.protocol.Command;
 import org.jredis.ri.JRedisTestSuiteBase;
+import org.jredis.ri.alphazero.support.Convert;
 import org.jredis.ri.alphazero.support.DefaultCodec;
 import org.jredis.ri.alphazero.support.Log;
+import org.jredis.ri.alphazero.support.Opts;
 import org.testng.annotations.Test;
 
 /**
@@ -1934,7 +1936,7 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 	
 	@Test
 	public void testZrangebyscoreStringByteArray() {
-		cmd = Command.ZRANGEBYSCORE.code + " byte[]";
+		cmd = Command.ZRANGEBYSCORE$OPTS.code + " byte[]";
 		Log.log("TEST: %s command", cmd);
 		try {
 			provider.flushdb();
@@ -1948,7 +1950,36 @@ public abstract class JRedisProviderTestsBase extends JRedisTestSuiteBase <JRedi
 			for(int i=0;i<SMALL_CNT-1; i++){
 				assertEquals(range.get(i), dataList.get(i), "expected value in the range by score missing");
 			}
-		} 
+
+            range = provider.zrangebyscore(setkey, 0, SMALL_CNT, Opts.LIMIT(0, TINY_CNT));
+			assertTrue(range.size() > 0, "should have non empty results for range by score here");
+			assertTrue(range.size() == TINY_CNT, "should have exactly " + TINY_CNT + " results here");
+			for(int i=0;i< TINY_CNT; i++){
+				assertEquals(range.get(i), dataList.get(i), "expected value in the range by score missing");
+			}
+
+            range = provider.zrangebyscore(setkey, 0, SMALL_CNT, Opts.WITHSCORES());
+            assertTrue(range.size() > 0, "should have non empty results for range by score here");
+            for(int i=0;i<(SMALL_CNT-1)*2; i+=2){
+                assertEquals(range.get(i), dataList.get(i/2), "expected value in the range by score missing");
+                assertEquals(Convert.toDouble(range.get(i + 1)), (double)(i/2), "expected score in the range by score missing");
+            }
+
+			range = provider.zrangebyscore(setkey, 0, SMALL_CNT, Opts.LIMIT(1, TINY_CNT));
+			assertTrue(range.size() > 0, "should have non empty results for range by score here");
+            assertTrue(range.size() == TINY_CNT, "should have exactly " + TINY_CNT + " results here");
+			for(int i=0;i< TINY_CNT; i++){
+				assertEquals(range.get(i), dataList.get(i+1), "expected value in the range by score missing");
+			}
+
+			range = provider.zrangebyscore(setkey, 0, SMALL_CNT, Opts.LIMIT(1, TINY_CNT), Opts.WITHSCORES());
+			assertTrue(range.size() > 0, "should have non empty results for range by score here");
+			assertTrue(range.size() == (TINY_CNT * 2), "should have exactly " + (TINY_CNT * 2) + " results here");
+			for(int i=0;i< TINY_CNT * 2; i+=2){
+				assertEquals(range.get(i), dataList.get(i/2+1), "expected value in the range by score missing");
+                assertEquals(Convert.toDouble(range.get(i + 1)), (double)(i/2+1), "expected score in the range by score missing");
+			}
+		}
 		catch (RedisException e) { fail(cmd + " ERROR => " + e.getLocalizedMessage(), e); }
 	}
 	

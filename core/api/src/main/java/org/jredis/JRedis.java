@@ -749,7 +749,7 @@ public interface JRedis {
 	 * @return
 	 * @throws RedisException
 	 */
-	public List<byte[]> zrangebyscore (String setkey, double minScore, double maxScore) throws RedisException; 
+	public List<byte[]> zrangebyscore (String setkey, double minScore, double maxScore, Opt... opts) throws RedisException;
 
 	/**
 	 * @Redis ZREMRANGEBYSCORE

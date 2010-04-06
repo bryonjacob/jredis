@@ -446,7 +446,7 @@ public abstract class JRedisFutureProviderTestsBase extends JRedisTestSuiteBase<
 	
 	@Test
 	public void testZrangebyscoreStringByteArray() throws InterruptedException{
-		cmd = Command.ZRANGEBYSCORE.code + " byte[] | " + Command.ZSCORE.code + " byte[]";
+		cmd = Command.ZRANGEBYSCORE$OPTS.code + " byte[] | " + Command.ZSCORE.code + " byte[]";
 		Log.log("TEST: %s command", cmd);
 
 		try {

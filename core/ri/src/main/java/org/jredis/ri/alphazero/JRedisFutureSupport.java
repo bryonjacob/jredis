@@ -29,14 +29,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.jredis.ClientRuntimeException;
-import org.jredis.JRedisFuture;
-import org.jredis.KeyValueSet;
-import org.jredis.ObjectInfo;
-import org.jredis.ProviderException;
-import org.jredis.RedisType;
-import org.jredis.Sort;
-import org.jredis.ZSetEntry;
+
+import org.jredis.*;
 import org.jredis.connector.Connection;
 import org.jredis.protocol.BulkResponse;
 import org.jredis.protocol.Command;
@@ -47,6 +41,7 @@ import org.jredis.protocol.ValueResponse;
 import org.jredis.ri.alphazero.semantics.DefaultKeyCodec;
 import org.jredis.ri.alphazero.support.Convert;
 import org.jredis.ri.alphazero.support.DefaultCodec;
+import org.jredis.ri.alphazero.support.Opts;
 import org.jredis.ri.alphazero.support.SortSupport;
 import org.jredis.semantics.KeyCodec;
 
@@ -859,7 +854,7 @@ public abstract class JRedisFutureSupport implements JRedisFuture {
 	}
 
 //	@Override
-	public Future<List<byte[]>> zrangebyscore(String key, double minScore, double maxScore) {
+	public Future<List<byte[]>> zrangebyscore(String key, double minScore, double maxScore, Opt... opts) {
 		byte[] keybytes = null;
 		if((keybytes = getKeyBytes(key)) == null) 
 			throw new IllegalArgumentException ("invalid key => ["+key+"]");
@@ -867,7 +862,7 @@ public abstract class JRedisFutureSupport implements JRedisFuture {
 		byte[] minScoreBytes = Convert.toBytes(minScore);
 		byte[] maxScoreBytes = Convert.toBytes(maxScore);
 
-		return new FutureByteArrayList(this.queueRequest(Command.ZRANGEBYSCORE, keybytes, minScoreBytes, maxScoreBytes));
+		return new FutureByteArrayList(this.queueRequest(Command.ZRANGEBYSCORE$OPTS, keybytes, minScoreBytes, maxScoreBytes, Opts.toSpecBytes(Command.ZRANGEBYSCORE$OPTS, opts)));
 	}
 	
 //	@Override

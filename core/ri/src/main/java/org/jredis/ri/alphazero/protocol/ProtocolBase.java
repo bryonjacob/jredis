@@ -153,9 +153,11 @@ public abstract class ProtocolBase implements Protocol {
 				buffer.write(Assert.notNull(args[1], "num_1 arg", ProviderException.class));
 				buffer.write(SPACE);
 				buffer.write(Assert.notNull(args[2], "num_2 arg", ProviderException.class));
-				buffer.write(SPACE);
-				buffer.write(Assert.notNull(args[3], "opt args", ProviderException.class));
-				buffer.write(CRLF);
+                if (args[3].length > 0) {
+                    buffer.write(SPACE);
+                    buffer.write(Assert.notNull(args[3], "opt args", ProviderException.class));
+                }
+                buffer.write(CRLF);
 				// -------------------
 				break;
 				
@@ -269,7 +271,7 @@ public abstract class ProtocolBase implements Protocol {
 			}
 		}
 		catch (Exception e) {
-			throw new ProviderException("Problem writing to the buffer" + e.getLocalizedMessage());
+			throw new ProviderException("Problem writing to the buffer" + e.getLocalizedMessage(), e);
 		}
 		return createRequest(buffer);
 	}

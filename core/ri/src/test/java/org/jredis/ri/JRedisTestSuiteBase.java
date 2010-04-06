@@ -61,6 +61,7 @@ public abstract class JRedisTestSuiteBase<T> extends ProviderTestBase<T>{
 	protected int	SMALL_DATA =  128;
 	protected int	MEDIUM_DATA = 1024 * 2;
 	protected int	LARGE_DATA =  1024 * 512;
+	protected int	TINY_CNT = 5;
 	protected int	SMALL_CNT = 10;
 	protected int	MEDIUM_CNT = 1000;
 	protected int	LARGE_CNT = 100000;

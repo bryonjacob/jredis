@@ -18,7 +18,9 @@ package org.jredis.protocol;
 
 import org.jredis.Redis;
 
-
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -110,7 +112,7 @@ public enum Command {
 	ZREVRANGE		(RequestType.KEY_NUM_NUM,		ResponseType.MULTI_BULK),
 	ZREVRANGE$OPTS	(RequestType.KEY_NUM_NUM_OPTS,	ResponseType.MULTI_BULK),
 	ZINCRBY		(RequestType.KEY_IDX_VALUE, ResponseType.BULK),
-	ZRANGEBYSCORE		(RequestType.KEY_NUM_NUM,	ResponseType.MULTI_BULK),
+	ZRANGEBYSCORE$OPTS (RequestType.KEY_NUM_NUM_OPTS,	ResponseType.MULTI_BULK, Command.Options.LIMIT, Command.Options.WITHSCORES),
 	ZREMRANGEBYSCORE	(RequestType.KEY_NUM_NUM,	ResponseType.NUMBER),
 	ZREMRANGEBYRANK	(RequestType.KEY_NUM_NUM,	ResponseType.NUMBER),
 	ZCOUNT		(RequestType.KEY_NUM_NUM, ResponseType.NUMBER),
@@ -162,6 +164,7 @@ public enum Command {
 //	public final int arg_cnt;
 	public final RequestType requestType;
 	public final ResponseType responseType;
+    public final Set<Options> allowedOptions;
 	
 	/**
 	 * Each enum member directly corresponds to a Redis command, per
@@ -170,7 +173,7 @@ public enum Command {
 	 * @param reqType the {@link RequestType} of the Command
 	 * @param respType the {@link ResponseType} of the Command
 	 */
-	Command (RequestType reqType, ResponseType respType) { 
+	Command (RequestType reqType, ResponseType respType, Command.Options... allowedOptions) {
 		this.code = this.name();
 		
 		if(code.indexOf("$OPT") > 0) 
@@ -181,6 +184,7 @@ public enum Command {
 //		this.length = code.length();
 		this.requestType = reqType;
 		this.responseType = respType;
+        this.allowedOptions = new HashSet<Options>(Arrays.asList(allowedOptions));
 //		this.arg_cnt = -1; // to raise exception -- make sure we don't miss any
 	}
 
